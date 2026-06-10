@@ -1,36 +1,60 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# altovo · World Cup 2026 prediction game
 
-## Getting Started
+Internal Tippspiel for the FIFA World Cup 2026. Mobile-first, altovo-branded,
+light/dark theme, Next.js + SQLite — one self-contained deployment.
 
-First, run the development server:
+## The rules
+
+- **3 points** for the exact score, **1 point** for the correct outcome, **0** otherwise.
+- **Knockouts:** you must pick a winner (no draw bets). The scoreline settles on the
+  result after 90/120 minutes; the outcome point goes to whoever picked the team
+  that advances — **penalties count**.
+- **Jokers double a match's points.** Budget: **3 in the group stage**, then **1 per
+  knockout round** (the third-place play-off and the final share one). Unused
+  jokers don't carry over.
+- **Bets are final.** You confirm once and can't change. Betting closes at kick-off.
+- **No peeking:** others' bets for a match stay hidden until you've placed your own
+  bet (or the match kicks off).
+- **Tiebreaker:** points → exact scores → correct outcomes → joker points.
+- The first (non-demo) account created becomes the admin. Admins can reset
+  forgotten PINs from the admin page.
+
+## Setup
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+cp .env.example .env.local        # add your football-data.org API key
+npm run dev                       # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Get a free API key at [football-data.org](https://www.football-data.org/client/register)
+(the free tier includes the World Cup). The schedule and results sync automatically
+every ~3 minutes around kick-offs; admins can also sync manually and enter or
+override results by hand (e.g. to set the penalty winner if the feed is late).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+No API key? Try it with demo data:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+node scripts/seed-demo.mjs
+```
 
-## Learn More
+Demo fixtures disappear automatically on the first real sync.
 
-To learn more about Next.js, take a look at the following resources:
+## Deploy (VPS / Fly / Render)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+npm run build
+npm start                          # serves on PORT (default 3000)
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- Persist the `data/` directory (SQLite DB + auto-generated session secret) —
+  on Fly/Render mount a volume and set `DATA_DIR` to it.
+- Set `FOOTBALL_DATA_API_KEY` in the environment.
+- Optional: `APP_TZ` (default `Europe/Berlin`) controls displayed kickoff times,
+  `SESSION_SECRET` pins the cookie secret across machines.
+- Back up by copying `data/worldcup.db`.
 
-## Deploy on Vercel
+## Stack
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Next.js 16 (App Router) · React 19 · better-sqlite3 · no other runtime deps.
+Brand: altovo brand sheet v1.0 (Sora / JetBrains Mono, navy scale on Paper/Abyss).

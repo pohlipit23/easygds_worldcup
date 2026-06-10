@@ -1,66 +1,115 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+import Link from "next/link";
+import { redirect } from "next/navigation";
+import { currentUser } from "@/lib/auth";
+import { maybeSync, hasApiKey } from "@/lib/fd";
+import { allMatches, predictionsByUser } from "@/lib/queries";
+import { getDb } from "@/lib/db";
+import { dayKey, fmtDay } from "@/lib/format";
+import { MatchCard } from "@/components/MatchCard";
+import { Logo } from "@/components/Logo";
+import { TzToggle } from "@/components/time";
 
-export default function Home() {
+export const dynamic = "force-dynamic";
+
+export default async function Home({
+  searchParams,
+}: {
+  searchParams: Promise<{ view?: string }>;
+}) {
+  const user = await currentUser();
+  if (!user) redirect("/login");
+  await maybeSync();
+
+  const { view: rawView } = await searchParams;
+  const view = rawView === "results" || rawView === "all" ? rawView : "upcoming";
+
+  const matches = allMatches();
+  const myPredictions = predictionsByUser(user.id);
+  const counts = new Map(
+    (getDb().prepare("SELECT match_id, COUNT(*) AS c FROM predictions GROUP BY match_id").all() as {
+      match_id: number;
+      c: number;
+    }[]).map((r) => [r.match_id, r.c])
+  );
+
+  const todayKey = dayKey(new Date().toISOString());
+  let visible = matches;
+  if (view === "upcoming") {
+    visible = matches.filter((m) => dayKey(m.kickoff) >= todayKey && m.status !== "FINISHED");
+  } else if (view === "results") {
+    visible = matches.filter((m) => m.status === "FINISHED").reverse();
+  }
+
+  const byDay = new Map<string, typeof matches>();
+  for (const m of visible) {
+    const k = dayKey(m.kickoff);
+    if (!byDay.has(k)) byDay.set(k, []);
+    byDay.get(k)!.push(m);
+  }
+
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className={styles.intro}>
-          <h1>To get started, edit the page.tsx file.</h1>
-          <p>
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <>
+      <section className="hero">
+        <div className="hero-mark" aria-hidden="true">
+          <Logo size={210} />
         </div>
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className={styles.secondary}
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+        <h1>
+          World Cup betting. <em>Simplified!</em>
+        </h1>
+        <p className="hero-meta mono">3 · 1 · 0 points — jokers double</p>
+        <div style={{ display: "flex", alignItems: "center", gap: 16, marginTop: 12, flexWrap: "wrap" }}>
+          <TzToggle />
+          <Link href="/rules" className="hero-rules mono">
+            How it works →
+          </Link>
         </div>
-      </main>
-    </div>
+      </section>
+
+      <div className="section-tabs">
+        <Link href="/?view=upcoming" className={view === "upcoming" ? "active" : ""}>
+          Upcoming
+        </Link>
+        <Link href="/?view=results" className={view === "results" ? "active" : ""}>
+          Results
+        </Link>
+        <Link href="/?view=all" className={view === "all" ? "active" : ""}>
+          All matches
+        </Link>
+      </div>
+
+      {matches.length === 0 ? (
+        <div className="empty">
+          <p>No fixtures loaded yet.</p>
+          {hasApiKey() ? (
+            <p>The schedule will appear after the first sync.</p>
+          ) : (
+            <p className="mono">Set FOOTBALL_DATA_API_KEY and sync from the admin page.</p>
+          )}
+        </div>
+      ) : visible.length === 0 ? (
+        <div className="empty">Nothing here yet.</div>
+      ) : (
+        [...byDay.entries()].map(([k, dayMatches]) => (
+          <section key={k}>
+            <div className="dayhead">
+              <h2>{k === todayKey ? "Today" : fmtDay(dayMatches[0].kickoff)}</h2>
+              <span className="mono" style={{ fontSize: 10 }}>
+                {dayMatches.length} match{dayMatches.length === 1 ? "" : "es"}
+              </span>
+            </div>
+            <div className="matchlist">
+              {dayMatches.map((m) => (
+                <MatchCard
+                  key={m.id}
+                  match={m}
+                  myPrediction={myPredictions.get(m.id)}
+                  betCount={counts.get(m.id) ?? 0}
+                />
+              ))}
+            </div>
+          </section>
+        ))
+      )}
+    </>
   );
 }
