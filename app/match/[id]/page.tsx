@@ -28,7 +28,7 @@ export default async function MatchPage({ params }: { params: Promise<{ id: stri
 
   return (
     <>
-      <div className="page-chips">
+      <div style={{ margin: "18px 0 6px", display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
         <span className="chip">{stageLabel}</span>
         {match.id < 0 ? <span className="chip chip-demo">Demo</span> : null}
         <span className="chip">
@@ -41,21 +41,25 @@ export default async function MatchPage({ params }: { params: Promise<{ id: stri
         <TzToggle compact />
       </div>
 
-      <div className="card match-hero">
+      <div className="card" style={{ marginTop: 10 }}>
         <div className="match-grid">
           <div className="predict-team">
             <TeamBadge crest={match.home_crest} tla={match.home_tla} name={match.home_team} />
-            <span className="team-code">{match.home_tla ?? "TBD"}</span>
+            <span style={{ fontWeight: 700, fontSize: 18, letterSpacing: "0.04em" }}>
+              {match.home_tla ?? "TBD"}
+            </span>
             <span className="mono" style={{ fontSize: 10 }}>
               {match.home_team ?? "to be decided"}
             </span>
           </div>
-          <div className={`scorebox lg${finished || live ? "" : " open"}`}>
+          <div className="scorebox" style={{ fontSize: 26 }}>
             {finished || live ? `${match.home_score ?? 0}–${match.away_score ?? 0}` : "vs"}
           </div>
           <div className="predict-team">
             <TeamBadge crest={match.away_crest} tla={match.away_tla} name={match.away_team} />
-            <span className="team-code">{match.away_tla ?? "TBD"}</span>
+            <span style={{ fontWeight: 700, fontSize: 18, letterSpacing: "0.04em" }}>
+              {match.away_tla ?? "TBD"}
+            </span>
             <span className="mono" style={{ fontSize: 10 }}>
               {match.away_team ?? "to be decided"}
             </span>
@@ -69,13 +73,13 @@ export default async function MatchPage({ params }: { params: Promise<{ id: stri
       </div>
 
       {myPrediction ? (
-        <div className="card bet-locked">
-          <div className="bet-locked-head">
+        <div className="card" style={{ marginTop: 12 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <div>
               <p className="mono" style={{ margin: 0 }}>
                 My bet · locked
               </p>
-              <p className="bet-locked-score">
+              <p style={{ fontSize: 26, fontFamily: "var(--font-jbmono)", fontWeight: 700, margin: "4px 0 0" }}>
                 {myPrediction.home_score}–{myPrediction.away_score}
               </p>
             </div>
@@ -84,10 +88,7 @@ export default async function MatchPage({ params }: { params: Promise<{ id: stri
               {(() => {
                 const res = pointsFor(match, myPrediction);
                 return res ? (
-                  <p
-                    className="pts bet-locked-pts"
-                    style={{ color: res.total > 0 ? "var(--ok)" : "var(--warn)" }}
-                  >
+                  <p className="pts" style={{ fontSize: 22, margin: "6px 0 0", color: res.total > 0 ? "var(--ok)" : "var(--warn)" }}>
                     +{res.total} pts
                   </p>
                 ) : null;
@@ -108,12 +109,12 @@ export default async function MatchPage({ params }: { params: Promise<{ id: stri
       ) : !locked ? (
         <div className="empty">Betting opens once both teams are decided.</div>
       ) : (
-        <div className="card bet-locked muted-card">
+        <div className="card" style={{ marginTop: 12, color: "var(--text-muted)" }}>
           You didn&apos;t place a bet on this match.
         </div>
       )}
 
-      <section className="bets-section">
+      <section style={{ marginTop: 24 }}>
         <div className="dayhead">
           <h2>Everyone&apos;s bets</h2>
           <span className="mono" style={{ fontSize: 10 }}>
@@ -123,7 +124,7 @@ export default async function MatchPage({ params }: { params: Promise<{ id: stri
         {locked || myPrediction ? (
           <AllBets matchId={match.id} match={match} myUserId={user.id} />
         ) : (
-          <div className="card muted-card">
+          <div className="card" style={{ color: "var(--text-muted)", fontSize: 14.5 }}>
             Hidden until you&apos;ve placed your own bet (or the match kicks off) — no peeking
             before you commit.
           </div>
@@ -144,28 +145,25 @@ function AllBets({
 }) {
   const bets = predictionsForMatch(matchId);
   if (bets.length === 0) {
-    return <div className="card muted-card">Nobody bet on this one.</div>;
+    return <div className="card" style={{ color: "var(--text-muted)" }}>Nobody bet on this one.</div>;
   }
   return (
-    <div className="card card-flush">
+    <div className="card" style={{ padding: "4px 16px" }}>
       {bets.map((b) => {
         const res = pointsFor(match, b);
         return (
           <div key={b.user_id} className="statrow">
-            <span className={`bet-row-name${b.user_id === myUserId ? " me" : ""}`}>
+            <span style={{ fontWeight: b.user_id === myUserId ? 700 : 500 }}>
               {b.name}
               {b.user_id === myUserId ? " (you)" : ""}
             </span>
-            <span className="bet-row-score">
+            <span style={{ display: "flex", gap: 10, alignItems: "center" }}>
               {b.joker ? <span className="chip chip-gold">2×</span> : null}
               <span style={{ fontFamily: "var(--font-jbmono)", fontWeight: 700 }}>
                 {b.home_score}–{b.away_score}
               </span>
               {res ? (
-                <span
-                  className="pts bet-row-pts"
-                  style={{ color: res.total > 0 ? "var(--ok)" : "var(--warn)" }}
-                >
+                <span className="pts" style={{ minWidth: 44, textAlign: "right", color: res.total > 0 ? "var(--ok)" : "var(--warn)" }}>
                   +{res.total}
                 </span>
               ) : null}

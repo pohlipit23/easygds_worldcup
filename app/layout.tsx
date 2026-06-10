@@ -32,7 +32,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       <head>
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT }} />
       </head>
-      <body className={`theme-stadium ${sora.variable} ${jbmono.variable}`}>
+      <body className={`${sora.variable} ${jbmono.variable}`}>
         <header className="topbar">
           <TopBack />
           <Link href="/" style={{ display: "flex", alignItems: "center", gap: 10 }}>

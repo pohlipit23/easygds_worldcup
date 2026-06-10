@@ -32,12 +32,12 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="login-shell">
-      <div className="login-brand">
+    <div style={{ maxWidth: 380, margin: "0 auto", paddingTop: 48 }}>
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 12, marginBottom: 28 }}>
         <Logo size={64} />
-        <h1>World Cup 2026</h1>
-        <p>
-          World Cup betting. <em>Simplified!</em>
+        <h1 style={{ fontSize: 28 }}>World Cup 2026</h1>
+        <p style={{ margin: 0, fontWeight: 500, color: "var(--text-muted)" }}>
+          World Cup betting. <em style={{ color: "var(--accent)", fontStyle: "normal" }}>Simplified!</em>
         </p>
       </div>
 
@@ -78,7 +78,7 @@ export default function LoginPage() {
       </form>
 
       {mode === "signup" ? (
-        <p className="login-hint">
+        <p style={{ fontSize: 13.5, color: "var(--text-muted)", marginTop: 16 }}>
           Pick the name your colleagues know you by — it appears on the leaderboard. Forgot your
           PIN later? Any admin can reset it for you.
         </p>

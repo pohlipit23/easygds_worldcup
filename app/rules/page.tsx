@@ -48,19 +48,32 @@ export default function RulesPage() {
         <h2>How it works</h2>
       </div>
       {SECTIONS.map((s) => (
-        <section key={s.title} className="rules-section">
-          <p className="mono rules-heading">{s.title}</p>
-          <div className="card card-flush">
+        <section key={s.title} style={{ marginBottom: 14 }}>
+          <p className="mono" style={{ margin: "14px 0 8px" }}>
+            {s.title}
+          </p>
+          <div className="card" style={{ padding: "4px 16px" }}>
             {s.items.map(([k, v]) => (
-              <div key={k} className="statrow rules-row">
-                <span className="rules-key">{k}</span>
-                <span className="rules-val">{v}</span>
+              <div key={k} className="statrow" style={{ alignItems: "flex-start", gap: 14 }}>
+                <span
+                  style={{
+                    fontFamily: "var(--font-jbmono)",
+                    fontWeight: 700,
+                    fontSize: 13,
+                    color: "var(--accent)",
+                    whiteSpace: "nowrap",
+                    paddingTop: 2,
+                  }}
+                >
+                  {k}
+                </span>
+                <span style={{ fontSize: 14.5, textAlign: "right" }}>{v}</span>
               </div>
             ))}
           </div>
         </section>
       ))}
-      <p className="muted-note">
+      <p style={{ fontSize: 12.5, color: "var(--text-muted)" }}>
         Kickoff times show in your own timezone by default — the toggle on the matches page
         switches to stadium-local time. Results come in automatically; an admin can correct them
         if the feed misbehaves. Forgot your PIN? Any admin can reset it for you.

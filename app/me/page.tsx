@@ -23,30 +23,30 @@ export default async function MePage() {
       </div>
 
       {me ? (
-        <div className="card stats-bar">
+        <div className="card" style={{ display: "flex", justifyContent: "space-around", textAlign: "center" }}>
           <div>
-            <p className="mono stat-label">Rank</p>
-            <p className="stat-big">#{me.rank}</p>
+            <p className="mono" style={{ margin: 0, fontSize: 10 }}>Rank</p>
+            <p style={{ fontSize: 26, fontWeight: 700, margin: 0, fontFamily: "var(--font-jbmono)" }}>#{me.rank}</p>
           </div>
           <div>
-            <p className="mono stat-label">Points</p>
-            <p className="stat-big">{me.points}</p>
+            <p className="mono" style={{ margin: 0, fontSize: 10 }}>Points</p>
+            <p style={{ fontSize: 26, fontWeight: 700, margin: 0, fontFamily: "var(--font-jbmono)" }}>{me.points}</p>
           </div>
           <div>
-            <p className="mono stat-label">Exact</p>
-            <p className="stat-big">{me.exact}</p>
+            <p className="mono" style={{ margin: 0, fontSize: 10 }}>Exact</p>
+            <p style={{ fontSize: 26, fontWeight: 700, margin: 0, fontFamily: "var(--font-jbmono)" }}>{me.exact}</p>
           </div>
           <div>
-            <p className="mono stat-label">Bets</p>
-            <p className="stat-big">{me.predictions}</p>
+            <p className="mono" style={{ margin: 0, fontSize: 10 }}>Bets</p>
+            <p style={{ fontSize: 26, fontWeight: 700, margin: 0, fontFamily: "var(--font-jbmono)" }}>{me.predictions}</p>
           </div>
         </div>
       ) : null}
 
-      <div className="dayhead sm">
-        <h2>Jokers</h2>
+      <div className="dayhead">
+        <h2 style={{ fontSize: 16 }}>Jokers</h2>
       </div>
-      <div className="card card-flush">
+      <div className="card" style={{ padding: "4px 16px" }}>
         {jokers.map((j) => (
           <div key={j.phase} className="statrow">
             <span style={{ fontSize: 14.5 }}>{j.label}</span>
@@ -58,13 +58,13 @@ export default async function MePage() {
           </div>
         ))}
       </div>
-      <p className="muted-note" style={{ marginTop: 10 }}>
+      <p style={{ fontSize: 12.5, color: "var(--text-muted)", margin: "10px 0 0" }}>
         A joker doubles that match&apos;s points. Filled dots are available, faded ones are spent.
         Unused group-stage jokers don&apos;t carry over.
       </p>
 
-      <div className="dayhead sm">
-        <h2>My bets ({matches.length})</h2>
+      <div className="dayhead">
+        <h2 style={{ fontSize: 16 }}>My bets ({matches.length})</h2>
       </div>
       {matches.length === 0 ? (
         <div className="empty">You haven&apos;t placed any bets yet.</div>

@@ -74,9 +74,9 @@ export function PredictForm({
   }
 
   return (
-    <div className="card bet-locked">
-      <div className="predict-head">
-        <h3>Your prediction</h3>
+    <div className="card" style={{ marginTop: 12 }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
+        <h3 style={{ fontSize: 16 }}>Your prediction</h3>
         <span className="mono" style={{ fontSize: 10 }}>
           closes in {remaining}
         </span>
@@ -162,41 +162,38 @@ export function PredictForm({
       >
         Place bet
       </button>
-      <p className="predict-note">
+      <p style={{ fontSize: 12.5, color: "var(--text-muted)", textAlign: "center", margin: "10px 0 0" }}>
         Bets are final — no changes once confirmed.
       </p>
 
       {confirming ? (
         <div className="sheet-backdrop" onClick={() => !busy && setConfirming(false)}>
           <div className="sheet" onClick={(e) => e.stopPropagation()}>
-            <div className="sheet-stripe" />
-            <div className="sheet-body">
-              <p className="mono" style={{ textAlign: "center", margin: 0 }}>
-                Confirm your bet
+            <p className="mono" style={{ textAlign: "center", margin: 0 }}>
+              Confirm your bet
+            </p>
+            <p style={{ textAlign: "center", margin: "10px 0 0", fontWeight: 600 }}>
+              {homeTeam} vs {awayTeam}
+            </p>
+            <div className="bigscore">
+              {home}–{away}
+            </div>
+            {joker ? (
+              <p style={{ textAlign: "center", margin: "0 0 8px" }}>
+                <span className="chip chip-gold">2× Joker played</span>
               </p>
-              <p style={{ textAlign: "center", margin: "10px 0 0", fontWeight: 600 }}>
-                {homeTeam} vs {awayTeam}
-              </p>
-              <div className="bigscore">
-                {home}–{away}
-              </div>
-              {joker ? (
-                <p style={{ textAlign: "center", margin: "0 0 8px" }}>
-                  <span className="chip chip-gold">2× Joker played</span>
-                </p>
-              ) : null}
-              <p className="muted-card" style={{ textAlign: "center" }}>
-                This is final. You can&apos;t change or cancel it afterwards
-                {joker ? " — and the joker is spent" : ""}.
-              </p>
-              <div className="sheet-actions">
-                <button className="btn btn-block" disabled={busy} onClick={() => setConfirming(false)}>
-                  Back
-                </button>
-                <button className="btn btn-primary btn-block" disabled={busy} onClick={place}>
-                  {busy ? "Placing…" : "Confirm bet"}
-                </button>
-              </div>
+            ) : null}
+            <p style={{ fontSize: 13.5, color: "var(--text-muted)", textAlign: "center" }}>
+              This is final. You can&apos;t change or cancel it afterwards
+              {joker ? " — and the joker is spent" : ""}.
+            </p>
+            <div style={{ display: "flex", gap: 10, marginTop: 14 }}>
+              <button className="btn btn-block" disabled={busy} onClick={() => setConfirming(false)}>
+                Back
+              </button>
+              <button className="btn btn-primary btn-block" disabled={busy} onClick={place}>
+                {busy ? "Placing…" : "Confirm bet"}
+              </button>
             </div>
           </div>
         </div>

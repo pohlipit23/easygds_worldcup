@@ -3,14 +3,6 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-function TabChevron() {
-  return (
-    <svg className="tab-chevron" viewBox="0 0 96 96" fill="none" aria-hidden="true">
-      <path d="M14 70 L48 14 L82 70" stroke="currentColor" strokeWidth="14" strokeLinejoin="miter" />
-    </svg>
-  );
-}
-
 const TABS = [
   {
     href: "/",
@@ -69,24 +61,20 @@ export function NavTabs({ isAdmin }: { isAdmin: boolean }) {
         },
       ]
     : TABS;
-
   return (
-    <div className="tabbar-wrap">
-      <nav className="tabbar">
-        {tabs.map((t) => {
-          const active =
-            t.href === "/"
-              ? pathname === "/" || pathname.startsWith("/match")
-              : pathname.startsWith(t.href);
-          return (
-            <Link key={t.href} href={t.href} className={active ? "active" : ""}>
-              {active ? <TabChevron /> : null}
-              {t.icon}
-              {t.label}
-            </Link>
-          );
-        })}
-      </nav>
-    </div>
+    <nav className="tabbar">
+      {tabs.map((t) => (
+        <Link
+          key={t.href}
+          href={t.href}
+          className={
+            t.href === "/" ? (pathname === "/" || pathname.startsWith("/match") ? "active" : "") : pathname.startsWith(t.href) ? "active" : ""
+          }
+        >
+          {t.icon}
+          {t.label}
+        </Link>
+      ))}
+    </nav>
   );
 }
