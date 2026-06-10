@@ -1,3 +1,18 @@
+# Self-hosting guides
+
+Pick your free host (both keep the app exactly as-is — single `next start`
+server + local SQLite, behind Caddy with automatic HTTPS):
+
+- **[Google Cloud `e2-micro`](./gcp.md)** — recommended; capacity is reliably
+  available.
+- **Oracle Cloud ARM** — below; more RAM, but ARM instances are often
+  "out of capacity".
+
+The `worldcup.service`, `Caddyfile`, and `worldcup.env.example` files in this
+folder are shared by both guides.
+
+---
+
 # Hosting on Oracle Cloud "Always Free"
 
 This app is a single Next.js (`next start`) server backed by a local SQLite file
