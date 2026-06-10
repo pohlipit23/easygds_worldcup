@@ -1,0 +1,11 @@
+# Caddy reverse proxy with automatic HTTPS (Let's Encrypt).
+# Install to /etc/caddy/Caddyfile, then: sudo systemctl reload caddy
+#
+# Replace tippspiel.example.com with your domain/subdomain. Its DNS A record
+# (and AAAA if you use IPv6) must point at this server's public IP BEFORE
+# reloading, or the TLS certificate request will fail.
+
+tippspiel.example.com {
+	encode zstd gzip
+	reverse_proxy 127.0.0.1:3000
+}
