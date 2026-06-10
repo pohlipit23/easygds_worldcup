@@ -12,9 +12,30 @@ import { TopBack } from "@/components/TopBack";
 const sora = Sora({ subsets: ["latin"], variable: "--font-sora" });
 const jbmono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-jbmono" });
 
+// Set NEXT_PUBLIC_SITE_URL in the environment to override (e.g. a new domain).
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://worldcup.ota-i.com";
+
+const SHARE_DESCRIPTION =
+  "Predict every match, play your jokers, and win the office cup. The altovo World Cup 2026 Tippspiel.";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: "altovo · World Cup 2026",
   description: "Internal World Cup 2026 prediction game",
+  applicationName: "altovo · World Cup 2026",
+  openGraph: {
+    type: "website",
+    url: "/",
+    siteName: "altovo · World Cup 2026",
+    title: "altovo · World Cup 2026 prediction game",
+    description: SHARE_DESCRIPTION,
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "altovo · World Cup 2026 prediction game",
+    description: SHARE_DESCRIPTION,
+  },
 };
 
 export const viewport: Viewport = {
