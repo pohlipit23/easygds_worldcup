@@ -35,6 +35,8 @@ function useTzMode(): TzMode {
   return useSyncExternalStore(subscribe, getMode, () => "local");
 }
 
+export { useTzMode, useMounted };
+
 function useMounted(): boolean {
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
@@ -43,7 +45,16 @@ function useMounted(): boolean {
 
 // Server-side fallback so SSR/first paint shows company time, then the client
 // corrects to the device timezone after hydration.
-const SSR_TZ = "Europe/Berlin";
+export const SSR_TZ = "Europe/Berlin";
+
+/** Timezone used to render a kickoff — mirrors <Kickoff> logic. */
+export function kickoffTimeZone(
+  mode: TzMode,
+  venueTz: string | null,
+  mounted: boolean
+): string | undefined {
+  return mode === "venue" ? (venueTz ?? "UTC") : mounted ? undefined : SSR_TZ;
+}
 
 function fmt(
   iso: string,

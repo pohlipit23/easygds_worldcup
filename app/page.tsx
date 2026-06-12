@@ -4,8 +4,7 @@ import { currentUser } from "@/lib/auth";
 import { maybeSync, hasApiKey } from "@/lib/fd";
 import { allMatches, predictionsByUser } from "@/lib/queries";
 import { getDb } from "@/lib/db";
-import { dayKey, fmtDay } from "@/lib/format";
-import { MatchCard } from "@/components/MatchCard";
+import { MatchListByDay } from "@/components/MatchListByDay";
 import { Logo } from "@/components/Logo";
 import { TzToggle } from "@/components/time";
 
@@ -31,21 +30,6 @@ export default async function Home({
       c: number;
     }[]).map((r) => [r.match_id, r.c])
   );
-
-  const todayKey = dayKey(new Date().toISOString());
-  let visible = matches;
-  if (view === "upcoming") {
-    visible = matches.filter((m) => dayKey(m.kickoff) >= todayKey && m.status !== "FINISHED");
-  } else if (view === "results") {
-    visible = matches.filter((m) => m.status === "FINISHED").reverse();
-  }
-
-  const byDay = new Map<string, typeof matches>();
-  for (const m of visible) {
-    const k = dayKey(m.kickoff);
-    if (!byDay.has(k)) byDay.set(k, []);
-    byDay.get(k)!.push(m);
-  }
 
   return (
     <>
@@ -86,29 +70,13 @@ export default async function Home({
             <p className="mono">Set FOOTBALL_DATA_API_KEY and sync from the admin page.</p>
           )}
         </div>
-      ) : visible.length === 0 ? (
-        <div className="empty">Nothing here yet.</div>
       ) : (
-        [...byDay.entries()].map(([k, dayMatches]) => (
-          <section key={k}>
-            <div className="dayhead">
-              <h2>{k === todayKey ? "Today" : fmtDay(dayMatches[0].kickoff)}</h2>
-              <span className="mono" style={{ fontSize: 10 }}>
-                {dayMatches.length} match{dayMatches.length === 1 ? "" : "es"}
-              </span>
-            </div>
-            <div className="matchlist">
-              {dayMatches.map((m) => (
-                <MatchCard
-                  key={m.id}
-                  match={m}
-                  myPrediction={myPredictions.get(m.id)}
-                  betCount={counts.get(m.id) ?? 0}
-                />
-              ))}
-            </div>
-          </section>
-        ))
+        <MatchListByDay
+          matches={matches}
+          view={view}
+          myPredictions={[...myPredictions.values()]}
+          counts={Object.fromEntries(counts)}
+        />
       )}
     </>
   );

@@ -29,11 +29,25 @@ export function tzShort(): string {
   return parts.find((p) => p.type === "timeZoneName")?.value ?? TZ;
 }
 
+/** Calendar day in `tz` as YYYY-MM-DD. Omit `tz` for the runtime default (device local). */
+export function dayKeyInTz(iso: string, tz?: string): string {
+  try {
+    return new Intl.DateTimeFormat("en-CA", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      timeZone: tz,
+    }).format(new Date(iso));
+  } catch {
+    return new Intl.DateTimeFormat("en-CA", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      timeZone: "UTC",
+    }).format(new Date(iso));
+  }
+}
+
 export function dayKey(iso: string): string {
-  return new Intl.DateTimeFormat("en-CA", {
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    timeZone: TZ,
-  }).format(new Date(iso));
+  return dayKeyInTz(iso, TZ);
 }
